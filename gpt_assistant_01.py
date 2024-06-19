@@ -83,9 +83,9 @@ if prompt := st.chat_input("무엇이 궁금하신가요?"):
     # Use the typewriter effect to display the response
     with st.chat_message("assistant", avatar=assistant_image):
         #st.image(assistant_image, width=30)  # 어시스턴트 프로필 이미지
-        st.write_stream(typewriter(response_text, delay=0.05))
+        st.write_stream(typewriter(response_text, delay=0.01))
 
     st.session_state.messages.append({"role": "assistant", "content": response_text})
 
-if len(st.session_state.messages) > 10:
-    st.session_state.messages = st.session_state.messages[-10:]
+if len(st.session_state.messages) > 30:
+    st.session_state.messages = st.session_state.messages[-30:]
