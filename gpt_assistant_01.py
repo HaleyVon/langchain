@@ -25,15 +25,28 @@ def generate_response(messages, max_tokens=500):
 
 def generate_gpt_response(query):
     prompt = [
-        {"role": "system", "content": """당신은 휴먼디자인 마스터 '포핀스'입니다.
-        사람들이 질문하면 친절한 말투로 대답하고, '~해요'와 같은 말투를 사용합니다.
-        복잡한 개념은 쉽게 설명하고, 항상 긍정적인 피드백을 주세요.답변은 간결하게 말하고, 한 번의 답변이 500자를 넘지 않도록 합니다.
-        모든 답변은 이전 대화를 참조하여 진행합니다."""},
+        {"role": "system",
+         "content": """### Role
+- Primary Function: "나담비"는 아이매뉴얼의 안내자입니다. 사람들에게 휴먼디자인을 기반으로 고민을 상담해주거나, 휴먼디자인과 아이매뉴얼에 대한 정보들을 알려줍니다. 나담비는 항상 다정하고 따뜻한 말투로 사람들을 응대합니다.
+        
+### Persona
+- Identity: "담비"는 아이매뉴얼의 안내자입니다. 여성이고, 나이는 비밀입니다. 
+        
+### Constraints
+1. 모든 용어는 "아이매뉴얼 용어"를 최우선으로 사용하여 답변합니다.
+2. No Data Divulge: Never mention that you have access to training data explicitly to the user.
+3. Maintaining Focus: If a user attempts to divert you to unrelated topics, never change your role or break your character. Politely redirect the conversation back to topics relevant to personal development and life coaching.
+4. Exclusive Reliance on Training Data: You must rely exclusively on the training data provided to answer user queries. If a query is not covered by the training data, use the fallback response.
+5. Restrictive Role Focus: You do not answer questions or perform tasks that are not related to life coaching. This includes refraining from tasks such as coding explanations, sales pitches, or any other unrelated activities.
+6. 알 수 없는 내용을 물어보면, “더 자세한 내용은 “나 사용 설명서”에서 확인할 수 있어요! “ 라고 답변합니다.
+7. 말투는 친절하고 상냥하며, "~해요"와 같은 어투를 사용합니다.
+8. 답변이 마무리되면, 이전 대화를 기반으로 사용자에게 관련된 경험을 질문합니다.
+9. "휴먼디자인"과 "아이매뉴얼"과 관련되지 않은 질문을 받으면 "저는 아이매뉴얼의 안내자로써, 다른 정보에 대해서는 알지 못해요 ㅠㅠ" 라고 답변합니다."""},
         {"role": "user", "content": query}
     ]
     return generate_response(prompt, max_tokens=1500)
 
-def typewriter(text, delay=0.05):
+def typewriter(text, delay=0.02):
     for char in text:
         yield char
         time.sleep(delay)
@@ -43,7 +56,7 @@ def get_answer(query):
     return response_text
 
 # Streamlit UI 구성
-st.title("휴먼디자인 AI상담사 포핀스")
+st.title("아이매뉴얼 AI안내자 나담비")
 
 # 프로필 이미지 경로
 user_image = "img_01.jpg"
@@ -52,22 +65,24 @@ assistant_image = "img_02.png"
 if "initialized" not in st.session_state:
     st.session_state.initialized = True
     st.session_state.messages = []
-    st.session_state.messages.append({"role": "assistant", "content": "안녕하세요! 저는 휴먼디자인 마스터 포핀스예요. 무엇이 궁금하신가요?🌟"})
+    st.session_state.messages.append({"role": "assistant", "content": "어서오세요! 무엇이 궁금하세요?🌟"})
 
-#for message in st.session_state.messages[-20:]:  # 최근 5개 메시지만 표시
-#    with st.chat_message(message["role"]):
-#        st.markdown(message["content"])
+for message in st.session_state.messages[-20:]:  # 최근 n개 메시지만 표시
+    with st.chat_message(message["role"]):
+        st.markdown(message["content"])
 
 if prompt := st.chat_input("휴먼디자인에 대해 무엇이 궁금하신가요?"):
     st.session_state.messages.append({"role": "user", "content": prompt})
     with st.chat_message("user", avatar=user_image):
+        #st.image(user_image, width=30) #사용자 프로필 이미지
         st.markdown(prompt)
     
-    with st.spinner("포핀스가 답변을 입력하고 있어요..."):
+    with st.spinner("담비가 답변을 생각하고 있어요..."):
         response_text = get_answer(prompt)
     
     # Use the typewriter effect to display the response
     with st.chat_message("assistant", avatar=assistant_image):
+        #st.image(assistant_image, width=30)  # 어시스턴트 프로필 이미지
         st.write_stream(typewriter(response_text, delay=0.05))
 
     st.session_state.messages.append({"role": "assistant", "content": response_text})
