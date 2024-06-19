@@ -53,7 +53,7 @@ if "initialized" not in st.session_state:
     st.session_state.messages = []
     st.session_state.messages.append({"role": "assistant", "content": "안녕하세요! 저는 휴먼디자인 마스터 포핀스예요. 휴먼디자인에 대해 궁금한 점이 있으면 무엇이든 물어보세요. 함께 성장하는 시간이 되길 바라요! 🌟"})
 
-for message in st.session_state.messages[-5:]:  # 최근 5개 메시지만 표시
+for message in st.session_state.messages[-20:]:  # 최근 5개 메시지만 표시
     with st.chat_message(message["role"]):
         st.markdown(message["content"])
 
